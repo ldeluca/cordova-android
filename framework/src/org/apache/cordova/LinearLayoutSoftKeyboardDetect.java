@@ -19,6 +19,7 @@
 package org.apache.cordova;
 
 import org.apache.cordova.api.LOG;
+import org.apache.cordova.DroidGap;
 
 import android.content.Context;
 //import android.view.View.MeasureSpec;
