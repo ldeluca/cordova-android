@@ -25,6 +25,7 @@ import java.net.URLDecoder;
 import java.nio.channels.FileChannel;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.cordova.DirectoryManager;
 import org.apache.cordova.api.CallbackContext;
 import org.apache.cordova.api.CordovaInterface;
 import org.apache.cordova.api.CordovaPlugin;

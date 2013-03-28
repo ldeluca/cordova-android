@@ -18,6 +18,7 @@
 */
 package org.apache.cordova.core;
 
+import org.apache.cordova.FileHelper;
 import org.apache.cordova.api.CallbackContext;
 import org.apache.cordova.api.CordovaPlugin;
 
