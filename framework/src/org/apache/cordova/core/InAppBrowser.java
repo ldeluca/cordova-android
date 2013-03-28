@@ -74,6 +74,7 @@ public class InAppBrowser extends CordovaPlugin {
     private static final String EXIT_EVENT = "exit";
     private static final String LOAD_START_EVENT = "loadstart";
     private static final String LOAD_STOP_EVENT = "loadstop";
+    private static final String LOAD_ERROR_EVENT = "loaderror";
     private static final String CLOSE_BUTTON_CAPTION = "closebuttoncaption";
     private long MAX_QUOTA = 100 * 1024 * 1024;
 
@@ -150,6 +151,21 @@ public class InAppBrowser extends CordovaPlugin {
 
                 PluginResult pluginResult = new PluginResult(PluginResult.Status.OK);
                 pluginResult.setKeepCallback(false);
+                this.callbackContext.sendPluginResult(pluginResult);
+            }
+            else if (action.equals("injectScriptCode")) {
+                String source = args.getString(0);
+
+                org.json.JSONArray jsonEsc = new org.json.JSONArray();
+                jsonEsc.put(source);
+                String jsonRepr = jsonEsc.toString();
+                String jsonSourceString = jsonRepr.substring(1, jsonRepr.length()-1);
+                String scriptEnclosure = "(function(d){var c=d.createElement('script');c.type='text/javascript';c.innerText="
+                                       + jsonSourceString
+                                       + ";d.getElementsByTagName('head')[0].appendChild(c);})(document)";
+                this.inAppWebView.loadUrl("javascript:" + scriptEnclosure);
+
+                PluginResult pluginResult = new PluginResult(PluginResult.Status.OK);
                 this.callbackContext.sendPluginResult(pluginResult);
             }
             else {
@@ -232,6 +248,7 @@ public class InAppBrowser extends CordovaPlugin {
      */
     private void closeDialog() {
         try {
+            this.inAppWebView.loadUrl("about:blank");
             JSONObject obj = new JSONObject();
             obj.put("type", EXIT_EVENT);
 
@@ -445,7 +462,7 @@ public class InAppBrowser extends CordovaPlugin {
                 
                 //Toggle whether this is enabled or not!
                 Bundle appSettings = cordova.getActivity().getIntent().getExtras();
-                boolean enableDatabase = appSettings.getBoolean("InAppBrowserStorageEnabled", true);
+                boolean enableDatabase = appSettings == null ? true : appSettings.getBoolean("InAppBrowserStorageEnabled", true);
                 if(enableDatabase)
                 {
                     String databasePath = cordova.getActivity().getApplicationContext().getDir("inAppBrowserDB", Context.MODE_PRIVATE).getPath();
@@ -494,16 +511,24 @@ public class InAppBrowser extends CordovaPlugin {
     }
 
     /**
-     * Create a new plugin result and send it back to JavaScript
+     * Create a new plugin success result and send it back to JavaScript
      *
      * @param obj a JSONObject contain event payload information
      */
     private void sendUpdate(JSONObject obj, boolean keepCallback) {
-        PluginResult result = new PluginResult(PluginResult.Status.OK, obj);
+        sendUpdate(obj, keepCallback, PluginResult.Status.OK);
+    }
+
+    /**
+     * Create a new plugin result and send it back to JavaScript
+     *
+     * @param obj a JSONObject contain event payload information
+     * @param status the status code to return to the JavaScript environment
+     */    private void sendUpdate(JSONObject obj, boolean keepCallback, PluginResult.Status status) {
+        PluginResult result = new PluginResult(status, obj);
         result.setKeepCallback(keepCallback);
         this.callbackContext.sendPluginResult(result);
     }
-
     public class InAppChromeClient extends WebChromeClient {
 
         /**
@@ -663,6 +688,23 @@ public class InAppBrowser extends CordovaPlugin {
             } catch (JSONException ex) {
                 Log.d(LOG_TAG, "Should never happen");
             }
+        }
+        
+        public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+            super.onReceivedError(view, errorCode, description, failingUrl);
+            
+            try {
+                JSONObject obj = new JSONObject();
+                obj.put("type", LOAD_ERROR_EVENT);
+                obj.put("url", failingUrl);
+                obj.put("code", errorCode);
+                obj.put("message", description);
+    
+                sendUpdate(obj, true, PluginResult.Status.ERROR);
+            } catch (JSONException ex) {
+                Log.d(LOG_TAG, "Should never happen");
+            }
+        	
         }
     }
 }
