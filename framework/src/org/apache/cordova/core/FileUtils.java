@@ -26,6 +26,7 @@ import android.util.Log;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.cordova.DirectoryManager;
+import org.apache.cordova.FileHelper;
 import org.apache.cordova.api.CallbackContext;
 import org.apache.cordova.api.CordovaPlugin;
 import org.apache.cordova.api.PluginResult;
