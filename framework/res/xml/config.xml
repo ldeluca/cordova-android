@@ -36,25 +36,7 @@
     <preference name="useBrowserHistory" value="true" />
     <preference name="exit-on-suspend" value="false" />
 <plugins>
-    <plugin name="App" value="org.apache.cordova.core.App"/>
-    <plugin name="Geolocation" value="org.apache.cordova.core.GeoBroker"/>
     <plugin name="Device" value="org.apache.cordova.core.Device"/>
-    <plugin name="Accelerometer" value="org.apache.cordova.core.AccelListener"/>
-    <plugin name="Compass" value="org.apache.cordova.core.CompassListener"/>
-    <plugin name="Media" value="org.apache.cordova.core.AudioHandler"/>
-    <plugin name="Camera" value="org.apache.cordova.core.CameraLauncher"/>
-    <plugin name="Contacts" value="org.apache.cordova.core.ContactManager"/>
-    <plugin name="File" value="org.apache.cordova.core.FileUtils"/>
-    <plugin name="NetworkStatus" value="org.apache.cordova.core.NetworkManager"/>
-    <plugin name="Notification" value="org.apache.cordova.core.Notification"/>
-    <plugin name="Storage" value="org.apache.cordova.core.Storage"/>
-    <plugin name="FileTransfer" value="org.apache.cordova.core.FileTransfer"/>
-    <plugin name="Capture" value="org.apache.cordova.core.Capture"/>
-    <plugin name="Battery" value="org.apache.cordova.core.BatteryListener"/>
-    <plugin name="SplashScreen" value="org.apache.cordova.core.SplashScreen"/>
-    <plugin name="Echo" value="org.apache.cordova.core.Echo" />
-    <plugin name="Globalization" value="org.apache.cordova.core.Globalization"/>
-    <plugin name="InAppBrowser" value="org.apache.cordova.core.InAppBrowser"/>
 </plugins>
 </cordova>
 
