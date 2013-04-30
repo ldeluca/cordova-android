@@ -24,6 +24,7 @@ import java.util.Hashtable;
 import org.apache.cordova.api.CordovaInterface;
 
 import org.apache.cordova.api.LOG;
+import org.apache.cordova.NativeToJsMessageQueue;
 import org.json.JSONException;
 import org.json.JSONObject;
 

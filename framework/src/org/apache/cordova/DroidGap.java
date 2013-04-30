@@ -22,6 +22,13 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.cordova.AuthenticationToken;
+import org.apache.cordova.Config;
+import org.apache.cordova.CordovaChromeClient;
+import org.apache.cordova.CordovaWebView;
+import org.apache.cordova.CordovaWebViewClient;
+import org.apache.cordova.IceCreamCordovaWebViewClient;
+import org.apache.cordova.LinearLayoutSoftKeyboardDetect;
 import org.apache.cordova.api.CordovaInterface;
 import org.apache.cordova.api.CordovaPlugin;
 import org.apache.cordova.api.LOG;
@@ -447,15 +454,6 @@ public class DroidGap extends Activity implements CordovaInterface {
     }
 
     /**
-     * Cancel loadUrl before it has been loaded.
-     */
-    // TODO NO-OP
-    @Deprecated
-    public void cancelLoadUrl() {
-        this.cancelLoadUrl = true;
-    }
-
-    /**
      * Clear the resource cache.
      */
     public void clearCache() {
@@ -502,6 +500,7 @@ public class DroidGap extends Activity implements CordovaInterface {
      * @param defaultValue
      * @return
      */
+    @Deprecated
     public boolean getBooleanProperty(String name, boolean defaultValue) {
         Bundle bundle = this.getIntent().getExtras();
         if (bundle == null) {
@@ -532,6 +531,7 @@ public class DroidGap extends Activity implements CordovaInterface {
      * @param defaultValue
      * @return
      */
+    @Deprecated
     public int getIntegerProperty(String name, int defaultValue) {
         Bundle bundle = this.getIntent().getExtras();
         if (bundle == null) {
@@ -556,6 +556,7 @@ public class DroidGap extends Activity implements CordovaInterface {
      * @param defaultValue
      * @return
      */
+    @Deprecated
     public String getStringProperty(String name, String defaultValue) {
         Bundle bundle = this.getIntent().getExtras();
         if (bundle == null) {
@@ -575,6 +576,7 @@ public class DroidGap extends Activity implements CordovaInterface {
      * @param defaultValue
      * @return
      */
+    @Deprecated
     public double getDoubleProperty(String name, double defaultValue) {
         Bundle bundle = this.getIntent().getExtras();
         if (bundle == null) {
@@ -598,6 +600,7 @@ public class DroidGap extends Activity implements CordovaInterface {
      * @param name
      * @param value
      */
+    @Deprecated
     public void setBooleanProperty(String name, boolean value) {
         Log.d(TAG, "Setting boolean properties in DroidGap will be deprecated in 3.0 on July 2013, please use config.xml");
         this.getIntent().putExtra(name, value);
@@ -609,6 +612,7 @@ public class DroidGap extends Activity implements CordovaInterface {
      * @param name
      * @param value
      */
+    @Deprecated
     public void setIntegerProperty(String name, int value) {
         Log.d(TAG, "Setting integer properties in DroidGap will be deprecated in 3.1 on August 2013, please use config.xml");
         this.getIntent().putExtra(name, value);
@@ -620,6 +624,7 @@ public class DroidGap extends Activity implements CordovaInterface {
      * @param name
      * @param value
      */
+    @Deprecated
     public void setStringProperty(String name, String value) {
         Log.d(TAG, "Setting string properties in DroidGap will be deprecated in 3.0 on July 2013, please use config.xml");
         this.getIntent().putExtra(name, value);
@@ -631,6 +636,7 @@ public class DroidGap extends Activity implements CordovaInterface {
      * @param name
      * @param value
      */
+    @Deprecated
     public void setDoubleProperty(String name, double value) {
         Log.d(TAG, "Setting double properties in DroidGap will be deprecated in 3.0 on July 2013, please use config.xml");
         this.getIntent().putExtra(name, value);

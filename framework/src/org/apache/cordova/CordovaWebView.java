@@ -31,6 +31,8 @@ import org.apache.cordova.api.CordovaInterface;
 import org.apache.cordova.api.LOG;
 import org.apache.cordova.api.PluginManager;
 import org.apache.cordova.api.PluginResult;
+import org.apache.cordova.ExposedJsApi;
+import org.apache.cordova.NativeToJsMessageQueue;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
