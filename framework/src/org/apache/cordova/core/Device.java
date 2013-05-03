@@ -16,10 +16,11 @@
        specific language governing permissions and limitations
        under the License.
 */
-package org.apache.cordova;
+package org.apache.cordova.core;
 
 import java.util.TimeZone;
 
+import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.api.CallbackContext;
 import org.apache.cordova.api.CordovaPlugin;
 import org.apache.cordova.api.LOG;
@@ -38,7 +39,7 @@ import android.telephony.TelephonyManager;
 public class Device extends CordovaPlugin {
     public static final String TAG = "Device";
 
-    public static String cordovaVersion = "2.6.0";              // Cordova version
+    public static String cordovaVersion = "2.5.0";              // Cordova version
     public static String platform = "Android";                  // Device OS
     public static String uuid;                                  // Device UUID
 
@@ -77,6 +78,7 @@ public class Device extends CordovaPlugin {
             r.put("uuid", Device.uuid);
             r.put("version", this.getOSVersion());
             r.put("platform", Device.platform);
+            r.put("name", this.getProductName());
             r.put("cordova", Device.cordovaVersion);
             r.put("model", this.getModel());
             callbackContext.success(r);

@@ -19,6 +19,7 @@
 package org.apache.cordova;
 
 import org.apache.cordova.api.LOG;
+import org.apache.cordova.CordovaActivity;
 
 import android.content.Context;
 //import android.view.View.MeasureSpec;
@@ -35,13 +36,13 @@ public class LinearLayoutSoftKeyboardDetect extends LinearLayout {
     private int oldWidth = 0; // Need to save old width for orientation change
     private int screenWidth = 0;
     private int screenHeight = 0;
-    private DroidGap app = null;
+    private CordovaActivity app = null;
 
     public LinearLayoutSoftKeyboardDetect(Context context, int width, int height) {
         super(context);
         screenWidth = width;
         screenHeight = height;
-        app = (DroidGap) context;
+        app = (CordovaActivity) context;
     }
 
     @Override

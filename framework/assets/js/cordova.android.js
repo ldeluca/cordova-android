@@ -1,9 +1,6 @@
 // Platform: android
-
-// commit d0ffb852378ff018bac2f3b12c38098a19b8ce00
-
-// File generated at :: Thu Apr 18 2013 15:10:54 GMT-0400 (EDT)
-
+// 2.7.0rc1-9-g2dde8a7
+// File generated at :: Thu May 02 2013 12:01:12 GMT-0700 (PDT)
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -22,9 +19,8 @@
  specific language governing permissions and limitations
  under the License.
 */
-
 ;(function() {
-
+var CORDOVA_JS_BUILD_LABEL = '2.7.0rc1-9-g2dde8a7';
 // file: lib/scripts/require.js
 
 var require,
@@ -1153,20 +1149,6 @@ module.exports = {
 
 });
 
-// file: lib/common/plugin/Acceleration.js
-define("cordova/plugin/Acceleration", function(require, exports, module) {
-
-var Acceleration = function(x, y, z, timestamp) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-    this.timestamp = timestamp || (new Date()).getTime();
-};
-
-module.exports = Acceleration;
-
-});
-
 // file: lib/common/plugin/Camera.js
 define("cordova/plugin/Camera", function(require, exports, module) {
 
@@ -1314,8 +1296,6 @@ var CaptureAudioOptions = function(){
     this.limit = 1;
     // Maximum duration of a single sound clip in seconds.
     this.duration = 0;
-    // The selected audio mode. Must match with one of the elements in supportedAudioModes array.
-    this.mode = null;
 };
 
 module.exports = CaptureAudioOptions;
@@ -1356,8 +1336,6 @@ define("cordova/plugin/CaptureImageOptions", function(require, exports, module) 
 var CaptureImageOptions = function(){
     // Upper limit of images user can take. Value must be equal or greater than 1.
     this.limit = 1;
-    // The selected image mode. Must match with one of the elements in supportedImageModes array.
-    this.mode = null;
 };
 
 module.exports = CaptureImageOptions;
@@ -1375,8 +1353,6 @@ var CaptureVideoOptions = function(){
     this.limit = 1;
     // Maximum duration of a single video clip in seconds.
     this.duration = 0;
-    // The selected video mode. Must match with one of the elements in supportedVideoModes array.
-    this.mode = null;
 };
 
 module.exports = CaptureVideoOptions;
@@ -3780,172 +3756,6 @@ module.exports = ProgressEvent;
 
 });
 
-// file: lib/common/plugin/accelerometer.js
-define("cordova/plugin/accelerometer", function(require, exports, module) {
-
-/**
- * This class provides access to device accelerometer data.
- * @constructor
- */
-var argscheck = require('cordova/argscheck'),
-    utils = require("cordova/utils"),
-    exec = require("cordova/exec"),
-    Acceleration = require('cordova/plugin/Acceleration');
-
-// Is the accel sensor running?
-var running = false;
-
-// Keeps reference to watchAcceleration calls.
-var timers = {};
-
-// Array of listeners; used to keep track of when we should call start and stop.
-var listeners = [];
-
-// Last returned acceleration object from native
-var accel = null;
-
-// Tells native to start.
-function start() {
-    exec(function(a) {
-        var tempListeners = listeners.slice(0);
-        accel = new Acceleration(a.x, a.y, a.z, a.timestamp);
-        for (var i = 0, l = tempListeners.length; i < l; i++) {
-            tempListeners[i].win(accel);
-        }
-    }, function(e) {
-        var tempListeners = listeners.slice(0);
-        for (var i = 0, l = tempListeners.length; i < l; i++) {
-            tempListeners[i].fail(e);
-        }
-    }, "Accelerometer", "start", []);
-    running = true;
-}
-
-// Tells native to stop.
-function stop() {
-    exec(null, null, "Accelerometer", "stop", []);
-    running = false;
-}
-
-// Adds a callback pair to the listeners array
-function createCallbackPair(win, fail) {
-    return {win:win, fail:fail};
-}
-
-// Removes a win/fail listener pair from the listeners array
-function removeListeners(l) {
-    var idx = listeners.indexOf(l);
-    if (idx > -1) {
-        listeners.splice(idx, 1);
-        if (listeners.length === 0) {
-            stop();
-        }
-    }
-}
-
-var accelerometer = {
-    /**
-     * Asynchronously acquires the current acceleration.
-     *
-     * @param {Function} successCallback    The function to call when the acceleration data is available
-     * @param {Function} errorCallback      The function to call when there is an error getting the acceleration data. (OPTIONAL)
-     * @param {AccelerationOptions} options The options for getting the accelerometer data such as timeout. (OPTIONAL)
-     */
-    getCurrentAcceleration: function(successCallback, errorCallback, options) {
-        argscheck.checkArgs('fFO', 'accelerometer.getCurrentAcceleration', arguments);
-
-        var p;
-        var win = function(a) {
-            removeListeners(p);
-            successCallback(a);
-        };
-        var fail = function(e) {
-            removeListeners(p);
-            errorCallback && errorCallback(e);
-        };
-
-        p = createCallbackPair(win, fail);
-        listeners.push(p);
-
-        if (!running) {
-            start();
-        }
-    },
-
-    /**
-     * Asynchronously acquires the acceleration repeatedly at a given interval.
-     *
-     * @param {Function} successCallback    The function to call each time the acceleration data is available
-     * @param {Function} errorCallback      The function to call when there is an error getting the acceleration data. (OPTIONAL)
-     * @param {AccelerationOptions} options The options for getting the accelerometer data such as timeout. (OPTIONAL)
-     * @return String                       The watch id that must be passed to #clearWatch to stop watching.
-     */
-    watchAcceleration: function(successCallback, errorCallback, options) {
-        argscheck.checkArgs('fFO', 'accelerometer.watchAcceleration', arguments);
-        // Default interval (10 sec)
-        var frequency = (options && options.frequency && typeof options.frequency == 'number') ? options.frequency : 10000;
-
-        // Keep reference to watch id, and report accel readings as often as defined in frequency
-        var id = utils.createUUID();
-
-        var p = createCallbackPair(function(){}, function(e) {
-            removeListeners(p);
-            errorCallback && errorCallback(e);
-        });
-        listeners.push(p);
-
-        timers[id] = {
-            timer:window.setInterval(function() {
-                if (accel) {
-                    successCallback(accel);
-                }
-            }, frequency),
-            listeners:p
-        };
-
-        if (running) {
-            // If we're already running then immediately invoke the success callback
-            // but only if we have retrieved a value, sample code does not check for null ...
-            if (accel) {
-                successCallback(accel);
-            }
-        } else {
-            start();
-        }
-
-        return id;
-    },
-
-    /**
-     * Clears the specified accelerometer watch.
-     *
-     * @param {String} id       The id of the watch returned from #watchAcceleration.
-     */
-    clearWatch: function(id) {
-        // Stop javascript timer & remove from timer list
-        if (id && timers[id]) {
-            window.clearInterval(timers[id].timer);
-            removeListeners(timers[id].listeners);
-            delete timers[id];
-        }
-    }
-};
-
-module.exports = accelerometer;
-
-});
-
-// file: lib/common/plugin/accelerometer/symbols.js
-define("cordova/plugin/accelerometer/symbols", function(require, exports, module) {
-
-
-var modulemapper = require('cordova/modulemapper');
-
-modulemapper.defaults('cordova/plugin/Acceleration', 'Acceleration');
-modulemapper.defaults('cordova/plugin/accelerometer', 'navigator.accelerometer');
-
-});
-
 // file: lib/android/plugin/android/app.js
 define("cordova/plugin/android/app", function(require, exports, module) {
 
@@ -5081,12 +4891,16 @@ function Device() {
 
     channel.onCordovaReady.subscribe(function() {
         me.getInfo(function(info) {
+            var buildLabel = info.cordova;
+            if (buildLabel != CORDOVA_JS_BUILD_LABEL) {
+                buildLabel += ' JS=' + CORDOVA_JS_BUILD_LABEL;
+            }
             me.available = true;
             me.platform = info.platform;
             me.version = info.version;
             me.name = info.name;
             me.uuid = info.uuid;
-            me.cordova = info.cordova;
+            me.cordova = buildLabel;
             me.model = info.model;
             channel.onCordovaInfoReady.fire();
         },function(e) {
@@ -6303,12 +6117,14 @@ module.exports = {
      * @param {Function} resultCallback     The callback that is called when user clicks on a button.
      * @param {String} title                Title of the dialog (default: "Prompt")
      * @param {Array} buttonLabels          Array of strings for the button labels (default: ["OK","Cancel"])
+     * @param {String} defaultText          Textbox input value (default: "Default text")
      */
-    prompt: function(message, resultCallback, title, buttonLabels) {
+    prompt: function(message, resultCallback, title, buttonLabels, defaultText) {
         var _message = (message || "Prompt message");
         var _title = (title || "Prompt");
         var _buttonLabels = (buttonLabels || ["OK","Cancel"]);
-        exec(resultCallback, null, "Notification", "prompt", [_message, _title, _buttonLabels]);
+        var _defaultText = (defaultText || "Default text");
+        exec(resultCallback, null, "Notification", "prompt", [_message, _title, _buttonLabels, _defaultText]);
     },
 
     /**
@@ -6650,9 +6466,7 @@ function UUIDcreatePart(length) {
 
 });
 
-
 window.cordova = require('cordova');
-
 // file: lib/scripts/bootstrap.js
 
 (function (context) {
@@ -6808,29 +6622,32 @@ require('cordova/channel').onNativeReady.fire();
 
 
     // Try to XHR the cordova_plugins.json file asynchronously.
-    try { // we commented we were going to try, so let us actually try and catch
-        var xhr = new context.XMLHttpRequest();
-        xhr.onload = function() {
-            // If the response is a JSON string which composes an array, call handlePluginsObject.
-            // If the request fails, or the response is not a JSON array, just call finishPluginLoading.
-            var obj = JSON.parse(this.responseText);
-            if (obj && obj instanceof Array && obj.length > 0) {
-                handlePluginsObject(obj);
-            } else {
-                finishPluginLoading();
-            }
-        };
-        xhr.onerror = function() {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function() {
+        // If the response is a JSON string which composes an array, call handlePluginsObject.
+        // If the request fails, or the response is not a JSON array, just call finishPluginLoading.
+        var obj;
+        try {
+            obj = this.status == 200 && this.responseText && JSON.parse(this.responseText);
+        } catch (err) {
+            // obj will be undefined.
+        }
+        if (Array.isArray(obj) && obj.length > 0) {
+            handlePluginsObject(obj);
+        } else {
             finishPluginLoading();
-        };
+        }
+    };
+    xhr.onerror = function() {
+        finishPluginLoading();
+    };
+    try { // we commented we were going to try, so let us actually try and catch
         xhr.open('GET', 'cordova_plugins.json', true); // Async
         xhr.send();
-    }
-    catch(err){
+    } catch(err){
         finishPluginLoading();
     }
 }(window));
-
 
 
 })();
