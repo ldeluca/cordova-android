@@ -686,6 +686,15 @@ public class CordovaActivity extends Activity implements CordovaInterface {
         super.onResume();
 
         LOG.d(TAG, "Resuming the App");
+        //Reload the configuration
+        Config.init(this);
+
+        LOG.d(TAG, "Resuming the App");
+        
+        //Code to test CB-3064
+        String errorUrl = this.getStringProperty("errorUrl", null);
+        LOG.d(TAG, "CB-3064: The errorUrl is " + errorUrl);
+          
         if (this.activityState == ACTIVITY_STARTING) {
             this.activityState = ACTIVITY_RUNNING;
             return;
@@ -723,7 +732,7 @@ public class CordovaActivity extends Activity implements CordovaInterface {
             appView.handleDestroy();
         }
         else {
-            this.endActivity();
+            this.activityState = ACTIVITY_EXITING; 
         }
     }
 
@@ -1038,7 +1047,6 @@ public class CordovaActivity extends Activity implements CordovaInterface {
                 root.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
                         ViewGroup.LayoutParams.FILL_PARENT, 0.0F));
                 root.setBackgroundResource(that.splashscreen);
-
                 // Create and show the dialog
                 splashDialog = new Dialog(that, android.R.style.Theme_Translucent_NoTitleBar);
                 // check to see if the splash screen should be full screen
