@@ -40,4 +40,8 @@
       <preference name="InAppBrowserStorageEnabled" value="true" />
       <preference name="disallowOverscroll" value="true" />
     -->
+
+    <feature name="Device">
+        <param name="android-package" value="org.apache.cordova.core.Device"/>
+    </feature>
 </widget>
