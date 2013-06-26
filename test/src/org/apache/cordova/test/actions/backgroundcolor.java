@@ -23,7 +23,8 @@ import android.os.Bundle;
 import org.apache.cordova.*;
 
 public class backgroundcolor extends DroidGap {
-    @Override
+    
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -32,7 +33,7 @@ public class backgroundcolor extends DroidGap {
         // backgroundColor can also be set in cordova.xml, but you must use the number equivalent of the color.  For example, Color.RED is
         //      <preference name="backgroundColor" value="-65536" />
         super.setIntegerProperty("backgroundColor", Color.GREEN);
-
+        
         super.init();
         super.loadUrl("file:///android_asset/www/backgroundcolor/index.html");
     }
